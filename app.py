@@ -17,7 +17,7 @@ def home():
     }, 200
 
 @app.post('/patients')
-def get_patient():
+def create_patient():
     data = request.get_json()
     surname = data['surname']
     name = data['name']
@@ -25,7 +25,6 @@ def get_patient():
 
     with psycopg2.connect(url) as connection:
         with connection.cursor() as cursor:
-            cursor.execute(CREATE_PATIENTS_TABLE)
             cursor.execute(DATA_REPETITION, (surname, name, age))
             if cursor.fetchone():
                 return {'msg': 'There is already a patient'}, 400
@@ -56,7 +55,7 @@ def get_all_patients():
                 return {'msg': 'No patients found'}, 404
 
 @app.get('/patients/<int:id>')
-def view_patient(id):
+def get_patient(id):
     try:
         with psycopg2.connect(url) as connection:
             with connection.cursor() as cursor:
@@ -72,7 +71,7 @@ def view_patient(id):
         return {'msg': f'No patient: "{id}"'}, 404
 
 @app.put('/patients/<int:id>')
-def put_patient(id):
+def update_patient(id):
     data = request.get_json()
     surname = data['surname']
     name = data['name']
